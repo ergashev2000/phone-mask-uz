@@ -30,6 +30,28 @@ pnpm add phone-mask-uz
 
 ## Basic Usage
 
+You can import the component in two ways:
+
+### Default Import
+```tsx
+import PhoneNumber from 'phone-mask-uz';
+
+function App() {
+  const [phone, setPhone] = useState('');
+  
+  return (
+    <PhoneNumber
+      value={phone}
+      onChange={(value, isValid) => {
+        setPhone(value);
+        console.log('Is valid:', isValid);
+      }}
+    />
+  );
+}
+```
+
+### Named Import
 ```tsx
 import { PhoneInput } from 'phone-mask-uz';
 
@@ -53,7 +75,7 @@ function App() {
 ### With Ant Design (antd)
 
 ```tsx
-import { PhoneInput } from 'phone-mask-uz';
+import PhoneNumber from 'phone-mask-uz';
 import { Form, Input } from 'antd';
 
 function AntdExample() {
@@ -65,7 +87,7 @@ function AntdExample() {
         name="phone"
         rules={[{ required: true, message: 'Please input your phone number!' }]}
       >
-        <PhoneInput
+        <PhoneNumber
           inputComponent={Input}
           inputProps={{
             size: 'large',
@@ -81,14 +103,14 @@ function AntdExample() {
 ### With Material-UI (MUI)
 
 ```tsx
-import { PhoneInput } from 'phone-mask-uz';
+import PhoneNumber from 'phone-mask-uz';
 import { TextField, FormControl } from '@mui/material';
 
 function MUIExample() {
   const [phone, setPhone] = useState('');
   
   return (
-    <PhoneInput
+    <PhoneNumber
       value={phone}
       onChange={(value, isValid) => setPhone(value)}
       inputComponent={TextField}
@@ -109,7 +131,7 @@ function MUIExample() {
 ### With Chakra UI
 
 ```tsx
-import { PhoneInput } from 'phone-mask-uz';
+import PhoneNumber from 'phone-mask-uz';
 import { Input, FormControl } from '@chakra-ui/react';
 
 function ChakraExample() {
@@ -117,7 +139,7 @@ function ChakraExample() {
   const [isValid, setIsValid] = useState(true);
   
   return (
-    <PhoneInput
+    <PhoneNumber
       value={phone}
       onChange={(value, valid) => {
         setPhone(value);
@@ -150,8 +172,23 @@ function ChakraExample() {
 | wrapperProps | object | {} | Props to pass to the wrapper component |
 | disabled | boolean | false | Whether the input is disabled |
 | className | string | '' | Additional CSS class |
+| placeholder | string | '+998 __ ___ __ __' | Input placeholder text |
 
 Plus all standard HTML input props (except 'onChange' and 'value').
+
+## Utility Functions
+
+The package also exports utility functions:
+
+```typescript
+import { normalizePhoneNumber, isValidPhoneNumber } from 'phone-mask-uz';
+
+// Format phone number
+const formatted = normalizePhoneNumber('998901234567'); // '+998 90 123 45 67'
+
+// Validate phone number
+const isValid = isValidPhoneNumber('+998 90 123 45 67'); // true
+```
 
 ## Validation
 
