@@ -1,28 +1,79 @@
 /**
  * O'zbekiston telefon raqamini formatlaydi
  * @param value - Kiruvchi telefon raqami
+ * @param format - Telefon raqamining formati (default: +998 (##) ### ## ##)
  * @returns Formatlangan telefon raqami
  */
-export const normalizePhoneNumber = (value: string): string => {
+interface OperatorInfo {
+  name: string;
+  codes: string[];
+}
+
+const OPERATORS: { [key: string]: OperatorInfo } = {
+  'Beeline': {
+    name: 'Beeline',
+    codes: ['90', '91']
+  },
+  'Ucell': {
+    name: 'Ucell',
+    codes: ['93', '94']
+  },
+  'UzMobile': {
+    name: 'UzMobile',
+    codes: ['95', '99']
+  },
+  'Perfectum': {
+    name: 'Perfectum',
+    codes: ['98']
+  },
+  'Uztelecom': {
+    name: 'Uztelecom',
+    codes: ['97']
+  }
+};
+
+export const getOperatorName = (phone: string): string | null => {
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length < 5) return null;
+
+  const operatorCode = digits.slice(3, 5);
+  for (const [operator, info] of Object.entries(OPERATORS)) {
+    if (info.codes.includes(operatorCode)) {
+      return operator;
+    }
+  }
+  return null;
+};
+
+export const normalizePhoneNumber = (
+  value: string,
+  format: string = '+998 (##) ### ## ##'
+): string => {
+  if (!value) return '';
+
   // Faqat raqamlar va + belgisini qoldirish
-  const cleanValue = value.replace(/[^+\d]/g, "");
+  const digits = value.replace(/\D/g, '');
+  
+  if (!digits.startsWith('998')) {
+    return format.replace(/[#]/g, '_');
+  }
 
-  // Agar +998 bilan boshlanmasa, default qiymat qaytarish
-  if (!cleanValue.startsWith("+998")) return "+998 ";
+  let result = format;
+  const numberDigits = digits.slice(3); // 998 dan keyingi raqamlar
+  let digitIndex = 0;
 
-  // +998 dan keyingi raqamlarni ajratib olish
-  const strippedValue = cleanValue.slice(4).replace(/\s/g, "");
+  // Formatdagi har bir belgini almashtirish
+  for (let i = 0; i < format.length && digitIndex < numberDigits.length; i++) {
+    if (format[i] === '#') {
+      result = result.substring(0, i) + numberDigits[digitIndex] + result.substring(i + 1);
+      digitIndex++;
+    }
+  }
 
-  // Raqamlarni guruhlarga bo'lish: XX XXX XX XX
-  const parts = [
-    strippedValue.slice(0, 2),    // XX
-    strippedValue.slice(2, 5),    // XXX
-    strippedValue.slice(5, 7),    // XX
-    strippedValue.slice(7, 9),    // XX
-  ];
-
-  // Bo'sh bo'lmagan qismlarni birlashtirish
-  return `+998 ${parts.filter(Boolean).join(" ")}`;
+  // Qolgan # larni _ ga almashtirish
+  result = result.replace(/[#]/g, '_');
+  
+  return result;
 };
 
 /**
@@ -31,6 +82,6 @@ export const normalizePhoneNumber = (value: string): string => {
  * @returns true agar raqam to'g'ri formatda bo'lsa
  */
 export const isValidPhoneNumber = (phone: string): boolean => {
-  const cleanNumber = phone.replace(/\D/g, "");
-  return cleanNumber.length === 12 && cleanNumber.startsWith("998");
+  const cleanNumber = phone.replace(/\D/g, '');
+  return cleanNumber.length === 12 && cleanNumber.startsWith('998');
 };

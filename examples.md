@@ -1,31 +1,12 @@
-# Phone Input Examples
+# phone-mask-uz Examples
 
 ## Basic Usage
 
-### Default Import
-```tsx
-import PhoneNumber from 'phone-mask-uz';
-
-function App() {
-  const [phone, setPhone] = useState('');
-  
-  return (
-    <PhoneNumber
-      value={phone}
-      onChange={(value, isValid) => {
-        setPhone(value);
-        console.log('Is valid:', isValid);
-      }}
-    />
-  );
-}
-```
-
-### Named Import
 ```tsx
 import { PhoneInput } from 'phone-mask-uz';
+import { useState } from 'react';
 
-function App() {
+function BasicExample() {
   const [phone, setPhone] = useState('');
   
   return (
@@ -35,149 +16,250 @@ function App() {
         setPhone(value);
         console.log('Is valid:', isValid);
       }}
+      placeholder="+998 (__) ___ __ __"
     />
   );
 }
 ```
 
-## With Ant Design (antd)
+## With Operator Detection
 
 ```tsx
-import PhoneNumber from 'phone-mask-uz';
-import { Form, Input } from 'antd';
+import { PhoneInput } from 'phone-mask-uz';
+import { useState } from 'react';
 
-function AntdExample() {
-  const [form] = Form.useForm();
-
+function OperatorExample() {
+  const [phone, setPhone] = useState('');
+  
   return (
-    <Form form={form}>
-      <Form.Item
-        name="phone"
-        rules={[{ required: true, message: 'Please input your phone number!' }]}
-      >
-        <PhoneNumber
-          inputComponent={Input}
-          inputProps={{
-            size: 'large',
-            placeholder: '+998 __ ___ __ __',
-          }}
-        />
-      </Form.Item>
-    </Form>
+    <PhoneInput
+      value={phone}
+      showOperator={true}
+      onChange={(value, isValid, operator) => {
+        setPhone(value);
+        console.log('Operator:', operator); // Beeline, Ucell, etc.
+      }}
+    />
   );
 }
 ```
 
-## With Material-UI (MUI)
+## Custom Format
 
 ```tsx
-import PhoneNumber from 'phone-mask-uz';
-import { TextField, FormControl } from '@mui/material';
+import { PhoneInput } from 'phone-mask-uz';
+import { useState } from 'react';
 
-function MUIExample() {
+function CustomFormatExample() {
   const [phone, setPhone] = useState('');
   
   return (
-    <PhoneNumber
+    <PhoneInput
       value={phone}
+      format="+998-##-###-##-##" // Custom format
       onChange={(value, isValid) => setPhone(value)}
+    />
+  );
+}
+```
+
+## With Error Handling
+
+```tsx
+import { PhoneInput } from 'phone-mask-uz';
+import { useState } from 'react';
+
+function ErrorHandlingExample() {
+  const [phone, setPhone] = useState('');
+  const [error, setError] = useState('');
+  
+  return (
+    <PhoneInput
+      value={phone}
+      error={error}
+      onChange={(value, isValid) => {
+        setPhone(value);
+        setError(isValid ? '' : 'Invalid phone number');
+      }}
+    />
+  );
+}
+```
+
+## With Material-UI Integration
+
+```tsx
+import { PhoneInput } from 'phone-mask-uz';
+import { TextField } from '@mui/material';
+import { useState } from 'react';
+
+function MaterialUIExample() {
+  const [phone, setPhone] = useState('');
+  
+  return (
+    <PhoneInput
+      value={phone}
+      onChange={(value) => setPhone(value)}
       inputComponent={TextField}
       inputProps={{
         variant: 'outlined',
-        placeholder: '+998 __ ___ __ __',
-        fullWidth: true,
-      }}
-      wrapperComponent={FormControl}
-      wrapperProps={{
-        fullWidth: true,
+        label: 'Phone Number',
+        fullWidth: true
       }}
     />
   );
 }
 ```
 
-## With Chakra UI
+## With Ant Design Integration
 
 ```tsx
-import PhoneNumber from 'phone-mask-uz';
-import { Input, FormControl } from '@chakra-ui/react';
+import { PhoneInput } from 'phone-mask-uz';
+import { Input } from 'antd';
+import { useState } from 'react';
 
-function ChakraExample() {
+function AntDesignExample() {
   const [phone, setPhone] = useState('');
-  const [isValid, setIsValid] = useState(true);
   
   return (
-    <PhoneNumber
+    <PhoneInput
       value={phone}
-      onChange={(value, valid) => {
-        setPhone(value);
-        setIsValid(valid);
-      }}
+      onChange={(value) => setPhone(value)}
       inputComponent={Input}
       inputProps={{
-        placeholder: '+998 __ ___ __ __',
-      }}
-      wrapperComponent={FormControl}
-      wrapperProps={{
-        isInvalid: !isValid,
+        size: 'large',
+        style: { width: '100%' }
       }}
     />
   );
 }
 ```
 
-## With Form Validation
+## Full Featured Example
 
 ```tsx
-import PhoneNumber from 'phone-mask-uz';
-import { useForm } from 'react-hook-form';
+import { PhoneInput } from 'phone-mask-uz';
+import { useState } from 'react';
 
-function FormExample() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
+function FullFeaturedExample() {
+  const [phone, setPhone] = useState('');
+  const [error, setError] = useState('');
+  
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <PhoneNumber
-        {...register('phone', { required: 'Phone number is required' })}
-        error={errors.phone?.message}
+    <div>
+      <PhoneInput
+        value={phone}
+        error={error}
+        showOperator={true}
+        format="+998 (##) ### ## ##"
+        onChange={(value, isValid, operator) => {
+          setPhone(value);
+          setError(isValid ? '' : 'Invalid phone number');
+          console.log('Current operator:', operator);
+        }}
+        placeholder="+998 (__) ___ __ __"
+        className="custom-phone-input"
+        wrapperComponent={({ children }) => (
+          <div className="input-wrapper">
+            {children}
+          </div>
+        )}
       />
-      <button type="submit">Submit</button>
-    </form>
+      
+      {/* Additional UI elements */}
+      {error && <p className="error-message">{error}</p>}
+    </div>
   );
 }
 ```
 
-## With Custom Styling
+## Styling Examples
 
-```tsx
-import PhoneNumber from 'phone-mask-uz';
-import styled from 'styled-components';
+### Basic CSS
 
-const StyledInput = styled.input`
+```css
+.phone-input {
   padding: 8px 12px;
-  border: 2px solid ${props => props.error ? 'red' : '#ccc'};
+  border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 16px;
   width: 100%;
-  
-  &:focus {
-    border-color: #2196f3;
-    outline: none;
+}
+
+.phone-input.error {
+  border-color: #ff4d4f;
+}
+
+.phone-input.focused {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.phone-input.disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+```
+
+### With Styled Components
+
+```tsx
+import styled from 'styled-components';
+import { PhoneInput } from 'phone-mask-uz';
+
+const StyledPhoneInput = styled(PhoneInput)`
+  input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    
+    &.error {
+      border-color: #ff4d4f;
+    }
+    
+    &:focus {
+      border-color: #1890ff;
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+    }
+    
+    &:disabled {
+      background-color: #f5f5f5;
+      cursor: not-allowed;
+    }
   }
 `;
+```
 
-function StyledExample() {
-  const [phone, setPhone] = useState('');
+## TypeScript Usage
+
+```tsx
+import { PhoneInput, PhoneInputProps } from 'phone-mask-uz';
+import { useState } from 'react';
+
+// Custom props interface extending PhoneInputProps
+interface CustomPhoneInputProps extends PhoneInputProps {
+  label?: string;
+}
+
+function TypeScriptExample({ label, ...props }: CustomPhoneInputProps) {
+  const [phone, setPhone] = useState<string>('');
+  const [isValid, setIsValid] = useState<boolean>(false);
+  
+  const handleChange: PhoneInputProps['onChange'] = (value, valid, operator) => {
+    setPhone(value);
+    setIsValid(valid);
+  };
   
   return (
-    <PhoneNumber
-      value={phone}
-      onChange={(value) => setPhone(value)}
-      inputComponent={StyledInput}
-    />
+    <div>
+      {label && <label>{label}</label>}
+      <PhoneInput
+        value={phone}
+        onChange={handleChange}
+        {...props}
+      />
+    </div>
   );
 }

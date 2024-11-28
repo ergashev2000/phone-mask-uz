@@ -1,19 +1,13 @@
-import React, {
-  useState,
-  useRef,
-  InputHTMLAttributes,
-  useCallback,
-  useEffect,
-  forwardRef,
-} from "react";
-import { normalizePhoneNumber } from "./normalizePhoneNumber";
+import React, { useState, useEffect, useCallback, useRef, forwardRef } from "react";
+import { normalizePhoneNumber, isValidPhoneNumber, getOperatorName } from "./normalizePhoneNumber";
 
 export interface PhoneInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> {
-  value?: string;
-  onChange?: (formattedValue: string, isValid: boolean) => void;
-  error?: string | boolean;
-  showError?: boolean;
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> {
+  value: string;
+  onChange: (value: string, isValid: boolean, operator?: string | null) => void;
+  error?: string;
+  format?: string;
+  showOperator?: boolean;
   inputComponent?: React.ComponentType<any>;
   inputProps?: Record<string, any>;
   wrapperComponent?: React.ComponentType<any>;
@@ -21,124 +15,132 @@ export interface PhoneInputProps
 }
 
 export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(({
-  value = "",
+  value,
   onChange,
   error,
-  showError = true,
-  className = "",
+  format = "+998 (##) ### ## ##",
+  showOperator = false,
   disabled = false,
+  className = "",
   inputComponent: InputComponent,
   inputProps = {},
   wrapperComponent: WrapperComponent,
   wrapperProps = {},
-  placeholder = "+998 __ ___ __ __",
+  placeholder = format,
   ...props
 }, ref) => {
   const innerRef = useRef<HTMLInputElement>(null);
-  const [inputValue, setInputValue] = useState<string>(
-    normalizePhoneNumber(value)
+  const combinedRef = (ref || innerRef) as React.RefObject<HTMLInputElement>;
+
+  const [inputValue, setInputValue] = useState(
+    normalizePhoneNumber(value, format)
   );
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isValid, setIsValid] = useState<boolean>(true);
-
-  const validatePhoneNumber = (phone: string): boolean => {
-    const cleanNumber = phone.replace(/\D/g, "");
-    return cleanNumber.length === 12 && cleanNumber.startsWith("998");
-  };
+  const [operator, setOperator] = useState<string | null>(null);
 
   useEffect(() => {
-    const normalizedValue = normalizePhoneNumber(value);
+    const normalizedValue = normalizePhoneNumber(value, format);
     setInputValue(normalizedValue);
-    setIsValid(validatePhoneNumber(normalizedValue));
-  }, [value]);
+    setIsValid(isValidPhoneNumber(normalizedValue));
+    if (showOperator) {
+      setOperator(getOperatorName(normalizedValue));
+    }
+  }, [value, format, showOperator]);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const rawValue = e.target.value;
-      if (!rawValue.startsWith("+998")) {
-        return;
-      }
-      const formattedValue = normalizePhoneNumber(rawValue);
-      const valid = validatePhoneNumber(formattedValue);
-      
+      const formattedValue = normalizePhoneNumber(rawValue, format);
+      const valid = isValidPhoneNumber(formattedValue);
+      const currentOperator = showOperator ? getOperatorName(formattedValue) : null;
+
       setInputValue(formattedValue);
       setIsValid(valid);
+      setOperator(currentOperator);
 
       if (onChange) {
-        onChange(formattedValue, valid);
+        onChange(formattedValue, valid, currentOperator);
       }
     },
-    [onChange]
+    [onChange, format, showOperator]
   );
 
   const handleFocus = () => {
     setIsFocused(true);
-    if (!inputValue || inputValue === "+998") {
-      setInputValue("+998");
-      if (onChange) {
-        onChange("+998", false);
-      }
-    }
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    if (inputValue === "+998") {
-      setInputValue("");
-      if (onChange) {
-        onChange("", false);
-      }
-    }
   };
 
-  const getInputClassName = useCallback(() => {
-    const classes = ["phone-input"];
-    if (className) classes.push(className);
-    if (isFocused) classes.push("focused");
-    if (!isValid && showError) classes.push("error");
-    return classes.join(" ");
-  }, [className, isFocused, isValid, showError]);
+  const getInputClassName = () => {
+    return [
+      className,
+      error ? "error" : "",
+      isFocused ? "focused" : "",
+      disabled ? "disabled" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+  };
 
-  const inputElement = InputComponent ? (
-    <InputComponent
-      ref={ref || innerRef}
-      value={inputValue}
-      onChange={handleInputChange}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      disabled={disabled}
-      className={getInputClassName()}
-      placeholder={placeholder}
-      {...inputProps}
-      {...props}
-    />
-  ) : (
-    <input
-      ref={ref || innerRef}
-      type="tel"
-      value={inputValue}
-      onChange={handleInputChange}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      disabled={disabled}
-      placeholder={placeholder}
-      className={getInputClassName()}
-      {...props}
-    />
+  const inputStyle = {
+    ...inputProps.style,
+    color: error ? 'red' : undefined,
+    borderColor: error ? 'red' : undefined
+  };
+
+  const renderInput = () => (
+    <div style={{ position: 'relative' }}>
+      {InputComponent ? (
+        <InputComponent
+          {...inputProps}
+          ref={combinedRef}
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          disabled={disabled}
+          className={getInputClassName()}
+          placeholder={placeholder}
+          style={inputStyle}
+          {...props}
+        />
+      ) : (
+        <input
+          {...props}
+          ref={combinedRef}
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          disabled={disabled}
+          placeholder={placeholder}
+          className={getInputClassName()}
+          style={inputStyle}
+        />
+      )}
+      {error && (
+        <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>
+          {error}
+        </div>
+      )}
+      {showOperator && operator && (
+        <div style={{ fontSize: '12px', marginTop: '4px', color: '#666' }}>
+          Operator: {operator}
+        </div>
+      )}
+    </div>
   );
 
-  if (WrapperComponent) {
-    return (
-      <WrapperComponent
-        {...wrapperProps}
-        error={showError ? error : undefined}
-      >
-        {inputElement}
-      </WrapperComponent>
-    );
-  }
-
-  return inputElement;
+  return WrapperComponent ? (
+    <WrapperComponent {...wrapperProps}>{renderInput()}</WrapperComponent>
+  ) : (
+    renderInput()
+  );
 });
 
 PhoneInput.displayName = "PhoneInput";
