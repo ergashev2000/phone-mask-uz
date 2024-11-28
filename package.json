@@ -1,6 +1,6 @@
 {
   "name": "phone-mask-uz",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "A flexible React component for formatting and validating Uzbekistan phone numbers",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -40,10 +40,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/phone-mask-uz"
+    "url": "https://github.com/ergashev2000/phone-mask-uz"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/phone-mask-uz/issues"
+    "url": "https://github.com/ergashev2000/phone-mask-uz/issues"
   },
-  "homepage": "https://github.com/yourusername/phone-mask-uz#readme"
+  "homepage": "https://github.com/ergashev2000/phone-mask-uz#readme"
 }
