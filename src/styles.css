@@ -1,0 +1,36 @@
+.phone-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.phone-input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.phone-input.focused {
+  border-color: #2196f3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.phone-input.error {
+  border-color: #f44336;
+}
+
+.phone-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.phone-input-error {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+  position: absolute;
+  bottom: -20px;
+}

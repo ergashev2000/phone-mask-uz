@@ -1,0 +1,49 @@
+{
+  "name": "phone-mask-uz",
+  "version": "1.0.0",
+  "description": "A flexible React component for formatting and validating Uzbekistan phone numbers",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "phone",
+    "mask",
+    "input",
+    "react",
+    "uzbekistan",
+    "phone-number",
+    "validation",
+    "formatting",
+    "uz",
+    "antd",
+    "material-ui",
+    "chakra-ui"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^4.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/phone-mask-uz"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/phone-mask-uz/issues"
+  },
+  "homepage": "https://github.com/yourusername/phone-mask-uz#readme"
+}
