@@ -1,6 +1,6 @@
 {
   "name": "phone-mask-uz",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A flexible React component for formatting and validating Uzbekistan phone numbers",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

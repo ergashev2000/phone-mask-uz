@@ -1,38 +1,51 @@
-# Phone Mask UZ
+# 📱 Phone Mask UZ
 
-A flexible and easy-to-use phone number input component for React applications with built-in Uzbekistan phone number formatting and validation. Seamlessly integrates with popular UI libraries like Ant Design, Material-UI, Chakra UI, and more.
+<div align="center">
+  <img src="https://img.shields.io/npm/v/phone-mask-uz" alt="NPM Version" />
+  <img src="https://img.shields.io/npm/l/phone-mask-uz" alt="License" />
+  <img src="https://img.shields.io/npm/dt/phone-mask-uz" alt="Downloads" />
+  <img src="https://img.shields.io/bundlephobia/min/phone-mask-uz" alt="Size" />
+</div>
 
-![NPM Version](https://img.shields.io/npm/v/phone-mask-uz)
-![License](https://img.shields.io/npm/l/phone-mask-uz)
+<p align="center">
+  <b>React Phone Number Input Component for Uzbekistan</b><br>
+  <sub>Seamlessly integrates with Ant Design, Material-UI, Chakra UI, and other UI libraries</sub>
+</p>
 
-## Features
+<br>
 
-- 📱 Automatic formatting for Uzbekistan phone numbers
+## ✨ Features
+
+- 🎯 Automatic formatting for Uzbekistan phone numbers
 - ✅ Built-in validation
-- 🔄 Seamless integration with popular UI libraries
-- 🎨 Highly customizable
-- 📦 Lightweight
+- 🔄 Works with all UI libraries
+- 🎨 Fully customizable
+- 📦 Lightweight (< 5KB)
 - 💪 Written in TypeScript
 - ⚡ Easy to use
 
-## Installation
+## 🚀 Installation
 
 ```bash
-# npm
 npm install phone-mask-uz
+```
 
-# yarn
+<details>
+<summary>Install with other package managers</summary>
+
+```bash
+# Yarn
 yarn add phone-mask-uz
 
 # pnpm
 pnpm add phone-mask-uz
 ```
+</details>
 
-## Basic Usage
+## 💻 Usage
 
-You can import the component in two ways:
+### 1️⃣ Basic Example
 
-### Default Import
 ```tsx
 import PhoneNumber from 'phone-mask-uz';
 
@@ -42,57 +55,28 @@ function App() {
   return (
     <PhoneNumber
       value={phone}
-      onChange={(value, isValid) => {
-        setPhone(value);
-        console.log('Is valid:', isValid);
-      }}
+      onChange={(value, isValid) => setPhone(value)}
+      placeholder="+998 __ ___ __ __"
     />
   );
 }
 ```
 
-### Named Import
-```tsx
-import { PhoneInput } from 'phone-mask-uz';
-
-function App() {
-  const [phone, setPhone] = useState('');
-  
-  return (
-    <PhoneInput
-      value={phone}
-      onChange={(value, isValid) => {
-        setPhone(value);
-        console.log('Is valid:', isValid);
-      }}
-    />
-  );
-}
-```
-
-## Integration Examples
-
-### With Ant Design (antd)
+### 2️⃣ With Ant Design
 
 ```tsx
 import PhoneNumber from 'phone-mask-uz';
 import { Form, Input } from 'antd';
 
-function AntdExample() {
+function App() {
   const [form] = Form.useForm();
 
   return (
     <Form form={form}>
-      <Form.Item
-        name="phone"
-        rules={[{ required: true, message: 'Please input your phone number!' }]}
-      >
+      <Form.Item name="phone">
         <PhoneNumber
           inputComponent={Input}
-          inputProps={{
-            size: 'large',
-            placeholder: '+998 __ ___ __ __',
-          }}
+          inputProps={{ size: 'large' }}
         />
       </Form.Item>
     </Form>
@@ -100,122 +84,103 @@ function AntdExample() {
 }
 ```
 
-### With Material-UI (MUI)
+<details>
+<summary>Usage with Material-UI and Chakra UI</summary>
+
+#### Material-UI
 
 ```tsx
 import PhoneNumber from 'phone-mask-uz';
-import { TextField, FormControl } from '@mui/material';
+import { TextField } from '@mui/material';
 
-function MUIExample() {
-  const [phone, setPhone] = useState('');
-  
+function App() {
   return (
     <PhoneNumber
-      value={phone}
-      onChange={(value, isValid) => setPhone(value)}
       inputComponent={TextField}
-      inputProps={{
-        variant: 'outlined',
-        placeholder: '+998 __ ___ __ __',
-        fullWidth: true,
-      }}
-      wrapperComponent={FormControl}
-      wrapperProps={{
-        fullWidth: true,
-      }}
+      inputProps={{ variant: 'outlined' }}
     />
   );
 }
 ```
 
-### With Chakra UI
+#### Chakra UI
 
 ```tsx
 import PhoneNumber from 'phone-mask-uz';
-import { Input, FormControl } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
 
-function ChakraExample() {
-  const [phone, setPhone] = useState('');
-  const [isValid, setIsValid] = useState(true);
-  
+function App() {
   return (
     <PhoneNumber
-      value={phone}
-      onChange={(value, valid) => {
-        setPhone(value);
-        setIsValid(valid);
-      }}
       inputComponent={Input}
-      inputProps={{
-        placeholder: '+998 __ ___ __ __',
-      }}
-      wrapperComponent={FormControl}
-      wrapperProps={{
-        isInvalid: !isValid,
-      }}
     />
   );
 }
 ```
+</details>
 
-## Props
+## 🎛 Props
+
+### Essential Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| value | string | '' | The input value |
-| onChange | (value: string, isValid: boolean) => void | - | Callback fired when the value changes |
-| error | string \| boolean | - | Error message or state |
-| showError | boolean | true | Whether to show error state |
-| inputComponent | React.ComponentType | - | Custom input component (e.g., antd Input, MUI TextField) |
-| inputProps | object | {} | Props to pass to the custom input component |
-| wrapperComponent | React.ComponentType | - | Custom wrapper component (e.g., Form.Item, FormControl) |
-| wrapperProps | object | {} | Props to pass to the wrapper component |
-| disabled | boolean | false | Whether the input is disabled |
-| className | string | '' | Additional CSS class |
+| value | string | '' | Input value |
+| onChange | (value: string, isValid: boolean) => void | - | Callback when value changes |
 | placeholder | string | '+998 __ ___ __ __' | Input placeholder text |
 
-Plus all standard HTML input props (except 'onChange' and 'value').
+<details>
+<summary>Additional Props</summary>
 
-## Utility Functions
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| error | string \| boolean | - | Error message or state |
+| showError | boolean | true | Show error state |
+| inputComponent | React.ComponentType | - | Custom input component (Antd Input, MUI TextField) |
+| inputProps | object | {} | Props for input component |
+| wrapperComponent | React.ComponentType | - | Wrapper component |
+| wrapperProps | object | {} | Props for wrapper component |
+| disabled | boolean | false | Disable input |
+| className | string | '' | CSS class |
+</details>
 
-The package also exports utility functions:
+## 🛠 Utility Functions
 
 ```typescript
 import { normalizePhoneNumber, isValidPhoneNumber } from 'phone-mask-uz';
 
 // Format phone number
-const formatted = normalizePhoneNumber('998901234567'); // '+998 90 123 45 67'
+normalizePhoneNumber('998901234567'); // '+998 90 123 45 67'
 
 // Validate phone number
-const isValid = isValidPhoneNumber('+998 90 123 45 67'); // true
+isValidPhoneNumber('+998 90 123 45 67'); // true
 ```
 
-## Validation
+## ✅ Validation
 
-The component automatically validates Uzbekistan phone numbers:
 - Must start with +998
-- Must be exactly 12 digits (excluding formatting)
-- Returns validation state through onChange callback
+- Must be exactly 12 digits
+- Validation state returned through onChange callback
 
-## Formatting
+## 🎨 Formatting
 
-Phone numbers are automatically formatted as: `+998 XX XXX XX XX`
+Number format: `+998 XX XXX XX XX`
 
-Example:
+**Example:**
 - Input: `998901234567`
-- Formatted: `+998 90 123 45 67`
+- Result: `+998 90 123 45 67`
 
-## Browser Support
+## 🌐 Browser Support
 
-- Chrome (and Chromium based browsers)
-- Firefox
+- Google Chrome
+- Mozilla Firefox
 - Safari
-- Edge
+- Microsoft Edge
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Feel free to submit a Pull Request.
 
-## License
+## 📄 License
 
 MIT 

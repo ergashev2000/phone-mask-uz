@@ -14,13 +14,9 @@ export interface PhoneInputProps
   onChange?: (formattedValue: string, isValid: boolean) => void;
   error?: string | boolean;
   showError?: boolean;
-  /** Custom input component (e.g., antd Input, MUI TextField) */
   inputComponent?: React.ComponentType<any>;
-  /** Props to pass to the custom input component */
   inputProps?: Record<string, any>;
-  /** Custom wrapper component (e.g., Form.Item, FormControl) */
   wrapperComponent?: React.ComponentType<any>;
-  /** Props to pass to the wrapper component */
   wrapperProps?: Record<string, any>;
 }
 
@@ -35,6 +31,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(({
   inputProps = {},
   wrapperComponent: WrapperComponent,
   wrapperProps = {},
+  placeholder = "+998 __ ___ __ __",
   ...props
 }, ref) => {
   const innerRef = useRef<HTMLInputElement>(null);
@@ -58,6 +55,9 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(({
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const rawValue = e.target.value;
+      if (!rawValue.startsWith("+998")) {
+        return;
+      }
       const formattedValue = normalizePhoneNumber(rawValue);
       const valid = validatePhoneNumber(formattedValue);
       
@@ -73,14 +73,31 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(({
 
   const handleFocus = () => {
     setIsFocused(true);
-    if (!inputValue) {
+    if (!inputValue || inputValue === "+998") {
       setInputValue("+998");
+      if (onChange) {
+        onChange("+998", false);
+      }
     }
   };
 
   const handleBlur = () => {
     setIsFocused(false);
+    if (inputValue === "+998") {
+      setInputValue("");
+      if (onChange) {
+        onChange("", false);
+      }
+    }
   };
+
+  const getInputClassName = useCallback(() => {
+    const classes = ["phone-input"];
+    if (className) classes.push(className);
+    if (isFocused) classes.push("focused");
+    if (!isValid && showError) classes.push("error");
+    return classes.join(" ");
+  }, [className, isFocused, isValid, showError]);
 
   const inputElement = InputComponent ? (
     <InputComponent
@@ -90,7 +107,8 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(({
       onFocus={handleFocus}
       onBlur={handleBlur}
       disabled={disabled}
-      className={className}
+      className={getInputClassName()}
+      placeholder={placeholder}
       {...inputProps}
       {...props}
     />
@@ -103,7 +121,8 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(({
       onFocus={handleFocus}
       onBlur={handleBlur}
       disabled={disabled}
-      className={`phone-input ${className} ${!isValid && showError ? "error" : ""}`}
+      placeholder={placeholder}
+      className={getInputClassName()}
       {...props}
     />
   );
