@@ -55,15 +55,47 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(({
       const valid = isValidPhoneNumber(formattedValue);
       const currentOperator = showOperator ? getOperatorName(formattedValue) : null;
 
-      setInputValue(formattedValue);
-      setIsValid(valid);
-      setOperator(currentOperator);
+      // Agar raqam formati noto'g'ri bo'lsa, o'zgartirmaslik
+      if (rawValue && !formattedValue.includes('_')) {
+        setInputValue(formattedValue);
+        setIsValid(valid);
+        setOperator(currentOperator);
 
-      if (onChange) {
-        onChange(formattedValue, valid, currentOperator);
+        if (onChange) {
+          onChange(formattedValue, valid, currentOperator);
+        }
       }
     },
     [onChange, format, showOperator]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      const input = e.currentTarget;
+      const selectionStart = input.selectionStart || 0;
+      const selectionEnd = input.selectionEnd || 0;
+
+      // Backspace tugmasi bosilganda
+      if (e.key === 'Backspace' && selectionStart === selectionEnd) {
+        const prevChar = input.value[selectionStart - 1];
+        if (prevChar && /\d/.test(prevChar)) {
+          const newValue = input.value.slice(0, selectionStart - 1) + '_' + input.value.slice(selectionStart);
+          setInputValue(newValue);
+          e.preventDefault();
+        }
+      }
+      
+      // Delete tugmasi bosilganda
+      if (e.key === 'Delete' && selectionStart === selectionEnd) {
+        const nextChar = input.value[selectionStart];
+        if (nextChar && /\d/.test(nextChar)) {
+          const newValue = input.value.slice(0, selectionStart) + '_' + input.value.slice(selectionStart + 1);
+          setInputValue(newValue);
+          e.preventDefault();
+        }
+      }
+    },
+    []
   );
 
   const handleFocus = () => {
@@ -100,6 +132,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(({
           type="text"
           value={inputValue}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           onFocus={handleFocus}
           onBlur={handleBlur}
           disabled={disabled}
@@ -115,6 +148,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(({
           type="text"
           value={inputValue}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           onFocus={handleFocus}
           onBlur={handleBlur}
           disabled={disabled}

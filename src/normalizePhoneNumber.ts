@@ -49,13 +49,15 @@ export const normalizePhoneNumber = (
   value: string,
   format: string = '+998 (##) ### ## ##'
 ): string => {
-  if (!value) return '';
+  if (!value) return format.replace(/[#]/g, '_');
 
   // Faqat raqamlar va + belgisini qoldirish
   const digits = value.replace(/\D/g, '');
   
-  if (!digits.startsWith('998')) {
-    return format.replace(/[#]/g, '_');
+  // Agar raqam 998 bilan boshlanmasa va kiritilgan qiymat bo'sh bo'lmasa
+  if (!digits.startsWith('998') && digits.length > 0) {
+    const newDigits = '998' + digits;
+    return normalizePhoneNumber(newDigits, format);
   }
 
   let result = format;
